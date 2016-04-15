@@ -26,11 +26,12 @@ values."
      auto-completion
      ;; better-defaults
      emacs-lisp
-     ;; javascript
-     private
+     javascript
      git
+     go
      ;; markdown
      org
+     private
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -45,7 +46,8 @@ values."
    dotspacemacs-additional-packages '(
                                       beacon
                                       key-chord
-                                      ;; company
+                                      company
+                                      go-mode company-go
                                       js2-mode company-tern
                                       popwin
                                       )
@@ -179,7 +181,7 @@ values."
    dotspacemacs-enable-paste-micro-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.4
+   dotspacemacs-which-key-delay 0.1
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
    ;; right; if there is insufficient space it displays it at the bottom.
@@ -188,7 +190,7 @@ values."
    ;; If non nil a progress bar is displayed when spacemacs is loading. This
    ;; may increase the boot time on some systems and emacs builds, set it to
    ;; nil to boost the loading time. (default t)
-   dotspacemacs-loading-progress-bar t
+   dotspacemacs-loading-progress-bar nil
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
    dotspacemacs-fullscreen-at-startup nil
@@ -216,10 +218,10 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers t
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode nil
+   dotspacemacs-smartparens-strict-mode t
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
@@ -240,7 +242,7 @@ values."
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup nil
+   dotspacemacs-whitespace-cleanup 'trailing
    ))
 
 (defun dotspacemacs/user-init ()
@@ -375,6 +377,8 @@ you should place you code here."
     :diminish helm-mode
     :config
     (helm-mode 1)
+    (helm-projectile-on)
+    (spacemacs/set-leader-keys "pk" 'helm-projectile-find-file-in-known-projects)
     (bind-keys :map helm-map
                ("C-f" . helm-execute-persistent-action)))
 
@@ -458,14 +462,23 @@ you should place you code here."
 
     (define-key magit-mode-map (kbd "C-c C-b") #'my/magit-browse))
 
+  (use-package go-mode
+    :config
+    (use-package go-mode-autoloads)
+    (use-package company-go)
+    (add-hook 'go-mode-hook (lambda ()
+                              (set (make-local-variable 'company-backends) '(company-go))
+                              (company-mode))))
+
   (use-package js2-mode
-    :mode "\\.js\\'"
+    :mode "\\.js$"
     :config
     (add-to-list 'load-path "D:/ProgramFiles/tern/emacs/")
+    (use-package company-tern)
+    (add-to-list 'company-backends 'company-tern)
     (autoload 'tern-mode "tern.el" nil t)
     (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
-    (use-package company-tern)
-    (add-to-list 'company-backends 'company-tern))
+    )
 
   )
 
