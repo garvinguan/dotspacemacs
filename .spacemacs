@@ -26,7 +26,7 @@ values."
      auto-completion
      ;; better-defaults
      emacs-lisp
-     javascript
+     (javascript :variables tern-command '("node" "c:/Users/Garvin/AppData/Roaming/npm/node_modules/tern/bin/tern"))
      git
      go
      ;; markdown
@@ -48,7 +48,6 @@ values."
                                       key-chord
                                       company
                                       go-mode company-go
-                                      js2-mode company-tern
                                       popwin
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
@@ -469,16 +468,6 @@ you should place you code here."
     (add-hook 'go-mode-hook (lambda ()
                               (set (make-local-variable 'company-backends) '(company-go))
                               (company-mode))))
-
-  (use-package js2-mode
-    :mode "\\.js$"
-    :config
-    (add-to-list 'load-path "D:/ProgramFiles/tern/emacs/")
-    (use-package company-tern)
-    (add-to-list 'company-backends 'company-tern)
-    (autoload 'tern-mode "tern.el" nil t)
-    (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
-    )
 
   )
 
