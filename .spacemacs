@@ -31,7 +31,8 @@ values."
      go
      ;; markdown
      org
-     private
+     ;; private
+     scala
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
