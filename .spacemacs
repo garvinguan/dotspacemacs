@@ -31,7 +31,7 @@ values."
      go
      ;; markdown
      org
-     ;; private
+     private
      scala
      ;; (shell :variables
      ;;        shell-default-height 30
@@ -46,6 +46,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
                                       beacon
+                                      one-time-pad-encrypt
                                       key-chord
                                       company
                                       go-mode company-go
@@ -221,7 +222,7 @@ values."
    dotspacemacs-line-numbers t
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode t
+   dotspacemacs-smartparens-strict-mode nil
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
@@ -261,12 +262,14 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place you code here."
-
+  (setq large-file-warning-threshold 15000000)
   (use-package org
     :bind (("C-c l" . org-store-link)
            ("C-c a" . org-agenda)
            ("C-c c" . org-capture))
     :config
+    (require 'org-drill)
+    (setq org-drill-add-random-noise-to-intervals-p t)
     (add-hook #'org-mode-hook #'org-indent-mode)
     (bind-key "M-e" 'toggle-truncate-lines org-mode-map)
     (setq org-default-notes-file (concat org-directory "/notes.org"))
@@ -286,14 +289,24 @@ you should place you code here."
              "%?\n")
             ("g" "go notes" entry (file+headline "~/org/notes.org" "Go notes")
              "*  %?\n  %U\n  %a")
-            ("j" "journal" entry (file+datetree "~/org/journal.org")
-             "*  %?\n %U\n  %a")))
+            ("l" "journal" entry (file+datetree "~/org/journal.org")
+             "*  %?\n %U\n  %a")
+            ("j" "Japanese Word" entry (file+headline "~/reading/skip/japanese.org" "Words")
+             "* <[%(garvin/japanese-prompt)]> :drill:
+Definition:
+%(garvin/japanese-get-definition (garvin/japanese-dict-find garvin/japanese-word))
+** Characters
+%(garvin/japanese-get-word garvin/japanese-word-dict)
+** Pronunciation
+%(garvin/japanese-get-pronunciation garvin/japanese-word-dict)
+")))
     (setq org-agenda-files (list "~/org/website.org"
                                  "~/org/other.org"
                                  "~/org/extensiontodos.org"
                                  ;; "~/org/recommendations.org"
                                  "~/org/notes.org"
                                  )))
+  (remove-hook 'prog-mode-hook #'smartparens-mode)
   (use-package popwin
     :commands popwin-mode
     :init (popwin-mode 1)
@@ -469,8 +482,20 @@ you should place you code here."
     (add-hook 'go-mode-hook (lambda ()
                               (set (make-local-variable 'company-backends) '(company-go))
                               (company-mode))))
-
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values (quote ((encoding . japanese-iso-8bit)))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
