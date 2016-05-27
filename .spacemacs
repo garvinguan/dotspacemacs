@@ -47,6 +47,7 @@ values."
    dotspacemacs-additional-packages '(
                                       beacon
                                       one-time-pad-encrypt
+                                      hlm-flx
                                       key-chord
                                       company
                                       go-mode company-go
@@ -271,7 +272,6 @@ you should place you code here."
     (require 'org-drill)
     (setq org-drill-add-random-noise-to-intervals-p t)
     (add-hook #'org-mode-hook #'org-indent-mode)
-    (bind-key "M-e" 'toggle-truncate-lines org-mode-map)
     (setq org-default-notes-file (concat org-directory "/notes.org"))
     (setq org-log-done t)
     (setq org-capture-templates
@@ -363,7 +363,7 @@ Definition:
     ;; Make horizontal movement cross lines
     (setq-default evil-cross-lines t)
     (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-word-mode)
-    (define-key evil-motion-state-map (kbd "C-d") 'helm-projectile-find-file)
+    (define-key evil-motion-state-map (kbd "C-i") 'evil-jump-forward)
     (key-chord-define evil-normal-state-map "jk" 'evil-force-normal-state)
     (key-chord-define evil-visual-state-map "jk" 'evil-change-to-previous-state)
     (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
@@ -474,6 +474,9 @@ Definition:
         (browse-url url)))
 
     (define-key magit-mode-map (kbd "C-c C-b") #'my/magit-browse))
+
+  (use-package helm-flx
+    :init (helm-flx-mode +1))
 
   (use-package go-mode
     :config
