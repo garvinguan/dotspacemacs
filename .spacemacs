@@ -26,9 +26,9 @@ values."
      auto-completion
      ;; better-defaults
      emacs-lisp
-     (javascript :variables tern-command '("node" "c:/Users/Garvin/AppData/Roaming/npm/node_modules/tern/bin/tern"))
+     javascript
      git
-     go
+     ;; go
      ;; markdown
      org
      private
@@ -171,7 +171,7 @@ values."
    ;; `find-contrib-file' (SPC f e c) are replaced. (default nil)
    dotspacemacs-use-ido nil
    ;; If non nil, `helm' will try to minimize the space it uses. (default nil)
-   dotspacemacs-helm-resize nil
+   dotspacemacs-helm-resize t
    ;; if non nil, the helm header is hidden when there is only one source.
    ;; (default nil)
    dotspacemacs-helm-no-header nil
@@ -183,7 +183,7 @@ values."
    dotspacemacs-enable-paste-micro-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.1
+   dotspacemacs-which-key-delay 5.1
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
    ;; right; if there is insufficient space it displays it at the bottom.
@@ -220,7 +220,7 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers t
+   dotspacemacs-line-numbers 'relative
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -254,6 +254,8 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (push '("melpa-stable" . "stable.melpa.org/packages/") configuration-layer--elpa-archives)
+  (push '(ensime . "melpa-stable") package-pinned-packages)
   )
 
 (defun dotspacemacs/user-config ()
@@ -263,7 +265,13 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place you code here."
+
+  (setq scroll-margin 4)
   (setq large-file-warning-threshold 15000000)
+  (spacemacs/set-leader-keys "k" 'helm-mini)
+  (spacemacs/set-leader-keys "w/" 'my-split-window-vertical)
+  (spacemacs/set-leader-keys "w-" 'my-split-window-horizontal)
+  (spacemacs/set-leader-keys "xh" 'mark-whole-buffer)
   (use-package org
     :bind (("C-c l" . org-store-link)
            ("C-c a" . org-agenda)
@@ -433,12 +441,14 @@ Definition:
 
   (use-package erc
     :init
-    (setq erc-nick "workisfun"
+    (setq erc-nick "covertbeginner"
           erc-hide-list '("JOIN" "PART" "QUIT"))
     (setq erc-autojoin-channels-alist
-          '(("freenode.net" "#emacs-beginners" "#go-nuts" "#javascript")))
+          '(("freenode.net" "#emacs-beginners" "#emacs" "#scala")
+            ("rizon.net" "#SchoolIdolFestival")))
     :config
     (spacemacs/set-leader-keys "ag" 'garvin-erc)
+    (spacemacs/set-leader-keys "ai" 'garvin-rizon)
     )
 
   (use-package ediff
@@ -478,13 +488,13 @@ Definition:
   (use-package helm-flx
     :init (helm-flx-mode +1))
 
-  (use-package go-mode
-    :config
-    (use-package go-mode-autoloads)
-    (use-package company-go)
-    (add-hook 'go-mode-hook (lambda ()
-                              (set (make-local-variable 'company-backends) '(company-go))
-                              (company-mode))))
+  ;; (use-package go-mode
+  ;;   :config
+  ;;   (use-package go-mode-autoloads)
+  ;;   (use-package company-go)
+  ;;   (add-hook 'go-mode-hook (lambda ()
+  ;;                             (set (make-local-variable 'company-backends) '(company-go))
+  ;;                             (company-mode))))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -494,6 +504,9 @@ Definition:
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (ws-butler window-numbering which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox spinner orgit org-projectile pcache org-present org org-pomodoro alert log4e gntp org-plus-contrib org-download org-bullets open-junk-file one-time-pad-encrypt noflet neotree move-text magit-gitflow macrostep lorem-ipsum livid-mode skewer-mode simple-httpd linum-relative link-hint key-chord json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc info+ indent-guide ido-vertical-mode hydra hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight ensime sbt-mode scala-mode elisp-slime-nav dumb-jump f diminish define-word company-tern s dash-functional tern company-statistics company-go go-mode company column-enforce-mode coffee-mode clean-aindent-mode bind-map bind-key beacon seq auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build spacemacs-theme)))
  '(safe-local-variable-values (quote ((encoding . japanese-iso-8bit)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
