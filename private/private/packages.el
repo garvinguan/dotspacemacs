@@ -275,4 +275,46 @@ This command does not push erased text to kill-ring."
 ;; refresh contents of buffers if file changes on disk
 (global-auto-revert-mode 1)
 
+(use-package org
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         ("C-c c" . org-capture))
+  :config
+  (require 'org-drill)
+  (setq org-drill-add-random-noise-to-intervals-p t)
+  (add-hook #'org-mode-hook #'org-indent-mode)
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-log-done t)
+  (setq org-capture-templates
+        '(("i" "importanttodo" entry (file+headline "~/org/notes.org" "Important")
+           "* TODO  %?\n  %U\n")
+          ("w" "websitetodo" entry (file+headline "~/org/website.org" "What to work on next")
+           "* TODO  %?")
+          ("n" "interesting things to find out" entry (file+headline "~/org/notes.org" "What to find out next")
+           "* TODO  %?")
+          ("q" "questions" entry (file+headline "~/org/notes.org" "Questions to ask")
+           "* TODO  %?\n  %U\n  %a")
+          ("r" "reminder" entry (file+headline "~/org/notes.org" "Reminder")
+           "* TODO  %?\n  %U\n  %a")
+          ("o" "other" plain (file+headline "~/org/notes.org" "Other")
+           "%?\n")
+          ("g" "go notes" entry (file+headline "~/org/notes.org" "Go notes")
+           "*  %?\n  %U\n  %a")
+          ("l" "journal" entry (file+datetree "~/org/journal.org")
+           "*  %?\n %U\n  %a")
+          ("j" "Japanese Word" entry (file+headline "~/reading/skip/japanese.org" "Words")
+           "* <[%(garvin/japanese-prompt)]> :drill:
+Definition:
+%(garvin/japanese-get-definition (garvin/japanese-dict-find garvin/japanese-word))
+** Characters
+%(garvin/japanese-get-word garvin/japanese-word-dict)
+** Pronunciation
+%(garvin/japanese-get-pronunciation garvin/japanese-word-dict)
+")))
+  (setq org-agenda-files (list "~/org/website.org"
+                               "~/org/other.org"
+                               "~/org/extensiontodos.org"
+                               ;; "~/org/recommendations.org"
+                               "~/org/notes.org"
+                               )))
 ;;; packages.el ends here
